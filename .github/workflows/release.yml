@@ -120,14 +120,14 @@ jobs:
     - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
     - run: just fetch
     # TODO support alternate targets
-    - run: just profile=release static=true target=x86_64-unknown-linux-musl cli-build
-    - run: mv "$(just --evaluate profile=release target=x86_64-unknown-linux-musl cli-bin)" linkerd-failover-linux-amd64
+    - run: just profile=release static=true target=aarch64-apple-darwin cli-build
+    - run: mv "$(just --evaluate profile=release target=aarch64-apple-darwin cli-bin)" linkerd-failover-macos-arm64
     - uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
       with:
         draft: false
         prerelease: false
         generate_release_notes: true
-        files: ./linkerd-failover-linux-amd64
+        files: ./linkerd-failover-macos-arm64
 
   chart-deploy:
     timeout-minutes: 10
