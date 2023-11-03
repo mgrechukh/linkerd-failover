@@ -1,0 +1,36 @@
+name: Mac
+
+# TODO(ver) This workflow can ONLY be exercised in the course of publishing a
+# release. This should be changed to exercise the release workflow without
+# publishing artifacts.
+#
+# TODO(ver) Change the versioning scheme so that released versions
+# match the software version of the CLI and controller.
+#
+# TODO(ver) Publish CLI binaries for other platforms (at least macOS).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gh-release:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    container: ghcr.io/linkerd/dev:v41-rust-musl
+    steps:
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+    - run: just fetch
+    # TODO support alternate targets
+    - run: just profile=release static=true target=aarch64-apple-darwin cli-build
+    - run: mv "$(just --evaluate profile=release target=aarch64-apple-darwin cli-bin)" linkerd-failover-macos-arm64
+    - uses: softprops/action-gh-release@de2c0eb89ae2a093876385947365aca7b0e5f844
+      with:
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+        files: ./linkerd-failover-macos-arm64
